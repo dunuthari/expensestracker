@@ -120,7 +120,7 @@ struct HomeView: View {
         .padding(.top, Space.s3)
         .padding(.bottom, Space.s2)
         .background(
-            LinearGradient(colors: [Palette.bg.opacity(0), Palette.bg], startPoint: .top, endPoint: .center)
+            LinearGradient(colors: [Palette.bg.opacity(0), Palette.bg], startPoint: .top, endPoint: UnitPoint(x: 0.5, y: 0.35))
         )
     }
 }

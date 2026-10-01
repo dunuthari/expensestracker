@@ -129,7 +129,8 @@ struct DSRow: View {
                     .tabularFigures()
                     .foregroundStyle(valueIsIncome ? Palette.incomeText : Palette.ink)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+                    .fixedSize(horizontal: true, vertical: false)
+                    .layoutPriority(1)
             }
         }
         .padding(Space.s4)

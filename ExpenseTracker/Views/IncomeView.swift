@@ -69,7 +69,7 @@ struct IncomeView: View {
                         }
 
                         VStack(alignment: .leading, spacing: Space.s3) {
-                            SectionHeader(title: "Credits", count: untaggedCount > 0 ? untaggedCount : nil, actionTitle: credits.isEmpty ? nil : "View all") { showAll = true }
+                            SectionHeader(title: "Credits", actionTitle: credits.isEmpty ? nil : "View all") { showAll = true }
                             if untaggedCount > 0 {
                                 Text("\(untaggedCount) untagged. Tap a credit to pick a group.")
                                     .ds(.caption)
@@ -98,7 +98,7 @@ struct IncomeView: View {
                     .padding(.top, Space.s3)
                     .padding(.bottom, Space.s2)
                     .background(
-                        LinearGradient(colors: [Palette.bg.opacity(0), Palette.bg], startPoint: .top, endPoint: .center)
+                        LinearGradient(colors: [Palette.bg.opacity(0), Palette.bg], startPoint: .top, endPoint: UnitPoint(x: 0.5, y: 0.35))
                     )
             }
             .background(Palette.bg)
