@@ -56,6 +56,8 @@ jobs:
     name: Simulator screenshots
     runs-on: macos-15
     needs: core-tests
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - name: Install XcodeGen
@@ -109,3 +111,16 @@ jobs:
           path: |
             shots
             crashes
+      - name: Publish screenshots to the ci-screenshots branch
+        if: always()
+        run: |
+          mkdir -p /tmp/publish
+          cp -R shots crashes /tmp/publish/ 2>/dev/null || true
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git checkout --orphan ci-screenshots
+          git rm -rf . -q || true
+          cp -R /tmp/publish/. .
+          git add shots crashes 2>/dev/null || true
+          git commit -m "Simulator screenshots for ${GITHUB_SHA}" || true
+          git push --force origin ci-screenshots
