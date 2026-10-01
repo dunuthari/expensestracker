@@ -19,9 +19,9 @@ final class MoneyAndReportTests: XCTestCase {
             ReportItem(groupID: nil, amount: 50)
         ]
         let totals = Report.totals(items)
-        XCTAssertEqual(totals.map(\.id), ["transport", "food", Report.ungroupedID])
-        XCTAssertEqual(totals[1].total, 350)
-        XCTAssertEqual(totals[1].count, 2)
+        XCTAssertEqual(totals.map(\.id), ["food", "transport", Report.ungroupedID])
+        XCTAssertEqual(totals[0].total, 350)
+        XCTAssertEqual(totals[0].count, 2)
         XCTAssertEqual(Report.sum(items), 700)
     }
 
