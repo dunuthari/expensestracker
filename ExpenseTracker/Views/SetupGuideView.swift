@@ -4,6 +4,7 @@ import SwiftData
 /// Step-by-step help for the one-time Shortcuts automation, plus test buttons.
 struct SetupGuideView: View {
     @Environment(\.modelContext) private var context
+    @Environment(\.openURL) private var openURL
     @State private var status: String?
 
     private let steps: [(String, String)] = [
@@ -21,6 +22,11 @@ struct SetupGuideView: View {
                 Text("iOS doesn't let apps read your messages. A Shortcuts automation passes each bank message to this app. You set it up once, in about two minutes.")
                     .ds(.body)
                     .foregroundStyle(Palette.inkSecondary)
+
+                Button("Open Shortcuts") {
+                    if let url = URL(string: "shortcuts://") { openURL(url) }
+                }
+                .buttonStyle(.pillStyle(.primary, fullWidth: true))
 
                 VStack(alignment: .leading, spacing: Space.s3) {
                     ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
