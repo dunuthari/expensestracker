@@ -5,6 +5,8 @@ import ExpenseCore
 enum SettingsKey {
     static let periodStartDay = "periodStartDay"
     static let lastMessageAt = "lastMessageAt"
+    /// When on, a message with the same text as one already saved is skipped. Off by default: every message is saved.
+    static let ignoreDuplicates = "ignoreDuplicates"
 }
 
 /// The one on-device store, shared by the app and the Shortcuts intent.

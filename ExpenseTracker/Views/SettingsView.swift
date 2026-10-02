@@ -6,6 +6,7 @@ import ExpenseCore
 struct SettingsView: View {
     @AppStorage(SettingsKey.periodStartDay) private var startDay = 1
     @AppStorage(SettingsKey.lastMessageAt) private var lastMessageAt = 0.0
+    @AppStorage(SettingsKey.ignoreDuplicates) private var ignoreDuplicates = false
     @State private var authStatus: UNAuthorizationStatus = .notDetermined
 
     private var period: BillingPeriod { BillingPeriod.containing(Date(), startDay: startDay) }
@@ -47,6 +48,7 @@ struct SettingsView: View {
                             linkRow(symbol: "message.fill", title: "Shortcut setup", subtitle: lastMessageText)
                         }
                         notificationRow
+                        duplicatesRow
                     }
                 }
                 .padding(Space.s4)
@@ -109,6 +111,21 @@ struct SettingsView: View {
                     }
                 }
                 .buttonStyle(.pillStyle(.secondary))
+            }
+        }
+        .padding(Space.s4)
+        .background(card)
+    }
+
+    private var duplicatesRow: some View {
+        Toggle(isOn: $ignoreDuplicates) {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Ignore repeated messages").ds(.rowTitle).foregroundStyle(Palette.ink)
+                Text(ignoreDuplicates
+                     ? "A message with the same text is skipped."
+                     : "Every message is saved, even if the text repeats.")
+                    .ds(.body)
+                    .foregroundStyle(Palette.inkSecondary)
             }
         }
         .padding(Space.s4)

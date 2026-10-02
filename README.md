@@ -5,6 +5,7 @@ An iPhone app that turns bank SMS alerts into an automatic expense and income tr
 - A debit alert (`HNB SMS ALERT:…`) becomes an expense and shows a notification. Tap a group button on the notification, or type a reason, and it is saved.
 - A credit alert (`LKR 1,500.00 credited to…`) is saved silently as income. You tag it later in the Income tab.
 - Anything the app can't read lands in Inbox as "Needs review".
+- Every message is saved, even if the text repeats. Turn on **Settings → Ignore repeated messages** to skip repeats.
 - You manage your own expense groups and income groups, and set the day each billing period starts.
 - The Report tab shows income, expenses and net for a period, with totals per group.
 

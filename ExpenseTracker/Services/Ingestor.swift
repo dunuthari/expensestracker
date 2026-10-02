@@ -27,7 +27,9 @@ enum Ingestor {
             let existing = (try? context.fetch(
                 FetchDescriptor<LedgerEntry>(predicate: #Predicate { $0.fingerprint == fingerprint })
             )) ?? []
-            if !existing.isEmpty { return .duplicate }
+            if !existing.isEmpty && UserDefaults.standard.bool(forKey: SettingsKey.ignoreDuplicates) {
+                return .duplicate
+            }
 
             let entry = LedgerEntry(from: parsed)
             context.insert(entry)

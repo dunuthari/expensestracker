@@ -79,7 +79,7 @@ struct SetupGuideView: View {
                 ? "Saved \(AppFormat.money(entry.amount)). A notification should appear."
                 : "Saved \(AppFormat.money(entry.amount, signed: true)) as income. No notification, as expected."
         case .duplicate:
-            status = "That sample was already saved. Try again in a few seconds."
+            status = "That sample was skipped because Ignore repeated messages is on."
         case .unrecognized:
             status = "The sample couldn't be read. It's in Inbox."
         }
