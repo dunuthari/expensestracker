@@ -47,6 +47,14 @@ struct SettingsView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Space.s8) {
+                    section("Bank messages") {
+                        NavigationLink { SetupGuideView() } label: {
+                            linkRow(symbol: "message.fill", title: "Shortcut setup", subtitle: lastMessageText)
+                        }
+                        notificationRow
+                        duplicatesRow
+                    }
+
                     section("Billing period") {
                         VStack(spacing: Space.s3) {
                             dateRow("Start date", selection: $draftStart)
@@ -68,16 +76,9 @@ struct SettingsView: View {
                             linkRow(symbol: "briefcase.fill", title: "Income groups", subtitle: "Salary, Freelance and more")
                         }
                     }
-
-                    section("Bank messages") {
-                        NavigationLink { SetupGuideView() } label: {
-                            linkRow(symbol: "message.fill", title: "Shortcut setup", subtitle: lastMessageText)
-                        }
-                        notificationRow
-                        duplicatesRow
-                    }
                 }
                 .padding(Space.s4)
+                .padding(.bottom, Space.s12)
             }
             .background(Palette.bg)
             .navigationTitle("Settings")
