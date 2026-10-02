@@ -9,8 +9,8 @@ enum Notifier {
     static let categoryID = "EXPENSE_CATEGORIZE"
     static let groupPrefix = "group:"
     static let reasonAction = "reason"
-    /// Banners show about four actions; three groups plus "Add reason…" fit.
-    static let maxGroupActions = 3
+    /// Every expense group is a button, plus "Add reason…". iOS lists up to ten actions.
+    static let maxActions = 10
 
     static func requestAuthorization() async -> Bool {
         let center = UNUserNotificationCenter.current()
@@ -29,7 +29,7 @@ enum Notifier {
                 if lhs.entries.count != rhs.entries.count { return lhs.entries.count > rhs.entries.count }
                 return lhs.sortOrder < rhs.sortOrder
             }
-            .prefix(maxGroupActions)
+            .prefix(maxActions - 1)
 
         var actions: [UNNotificationAction] = top.map {
             UNNotificationAction(identifier: groupPrefix + $0.id.uuidString, title: $0.name, options: [])
@@ -50,6 +50,13 @@ enum Notifier {
             options: []
         )
         UNUserNotificationCenter.current().setNotificationCategories([category])
+    }
+
+    /// Re-registers the buttons from the groups saved right now. Call after groups change,
+    /// so a notification that is already on screen also shows the new groups.
+    static func refreshCategory() {
+        let groups = (try? Persistence.container.mainContext.fetch(FetchDescriptor<TxGroup>())) ?? []
+        registerCategory(groups: groups)
     }
 
     static func postExpense(_ entry: LedgerEntry, groups: [TxGroup]) async {

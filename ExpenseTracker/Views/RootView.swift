@@ -29,6 +29,7 @@ struct RootView: View {
         .task {
             Persistence.seedIfNeeded(context)
             Persistence.seedDemoIfRequested(context)
+            Notifier.refreshCategory()
             // Demo launches skip the permission alert so screenshots stay clean.
             if !UserDefaults.standard.bool(forKey: "demoData"),
                await Notifier.authorizationStatus() == .notDetermined {

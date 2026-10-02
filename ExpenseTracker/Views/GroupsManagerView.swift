@@ -36,12 +36,14 @@ struct GroupsManagerView: View {
             .onDelete { offsets in
                 for index in offsets { context.delete(groups[index]) }
                 try? context.save()
+                Task { @MainActor in Notifier.refreshCategory() }
             }
             .onMove { source, destination in
                 var reordered = groups
                 reordered.move(fromOffsets: source, toOffset: destination)
                 for (index, group) in reordered.enumerated() { group.sortOrder = index }
                 try? context.save()
+                Task { @MainActor in Notifier.refreshCategory() }
             }
 
             Text("Deleting a group keeps its entries and marks them \(kind == .debit ? "Uncategorized" : "Untagged").")
@@ -163,6 +165,7 @@ struct GroupEditSheet: View {
             context.insert(TxGroup(name: trimmedName, kind: kind, colorKey: colorKey, symbol: symbol, sortOrder: nextOrder))
         }
         try? context.save()
+        Task { @MainActor in Notifier.refreshCategory() }
         dismiss()
     }
 }
