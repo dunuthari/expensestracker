@@ -21,6 +21,8 @@ jobs:
     name: Build app
     runs-on: macos-15
     needs: core-tests
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - name: Install XcodeGen
@@ -51,6 +53,18 @@ jobs:
         with:
           name: ExpenseTracker-xcodeproj
           path: ExpenseTracker.xcodeproj
+      - name: Publish the .ipa to the ci-ipa branch (easy download)
+        run: |
+          mkdir -p /tmp/ipa
+          cp ExpenseTracker-unsigned.ipa /tmp/ipa/
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git checkout --orphan ci-ipa
+          git rm -rf . -q || true
+          cp /tmp/ipa/ExpenseTracker-unsigned.ipa .
+          git add -f ExpenseTracker-unsigned.ipa
+          git commit -m "Unsigned .ipa for ${GITHUB_SHA}"
+          git push --force origin ci-ipa
 
   screenshots:
     name: Simulator screenshots
