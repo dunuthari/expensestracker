@@ -72,7 +72,10 @@ enum Notifier {
         content.categoryIdentifier = categoryID
         content.userInfo = ["entryID": entry.id.uuidString]
         content.sound = .default
-        content.threadIdentifier = "expenses"
+        // One thread per expense. A shared thread makes iOS fold several alerts into one stack,
+        // so only the top one shows its group buttons. Separate threads keep every alert on its own.
+        content.threadIdentifier = entry.id.uuidString
+        content.interruptionLevel = .active
 
         let request = UNNotificationRequest(identifier: entry.id.uuidString, content: content, trigger: nil)
         try? await center.add(request)
