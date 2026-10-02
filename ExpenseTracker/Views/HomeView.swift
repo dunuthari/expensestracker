@@ -6,13 +6,14 @@ struct HomeView: View {
     @Query(sort: \LedgerEntry.date, order: .reverse) private var entries: [LedgerEntry]
     @Query(sort: \TxGroup.sortOrder) private var allGroups: [TxGroup]
     @AppStorage(SettingsKey.periodStartDay) private var startDay = 1
+    @AppStorage(SettingsKey.customStart) private var customStart = 0.0
+    @AppStorage(SettingsKey.customEnd) private var customEnd = 0.0
 
     @State private var showAdd = false
-    @State private var showPaste = false
     @State private var showAll = false
     @State private var selected: LedgerEntry?
 
-    private var period: BillingPeriod { BillingPeriod.containing(Date(), startDay: startDay) }
+    private var period: BillingPeriod { currentPeriod(startDay: startDay, customStart: customStart, customEnd: customEnd) }
     private var expenses: [LedgerEntry] { entries.filter { $0.kind == .debit && period.contains($0.date) } }
     private var groups: [TxGroup] { allGroups.filter { $0.kind == .debit } }
     private var total: Decimal { expenses.reduce(0) { $0 + $1.amount } }
@@ -46,7 +47,6 @@ struct HomeView: View {
                 ActivityListView(title: "Expenses", kind: .debit)
             }
             .sheet(isPresented: $showAdd) { AddEntrySheet(kind: .debit) }
-            .sheet(isPresented: $showPaste) { PasteMessageSheet() }
             .sheet(item: $selected) { EntryDetailSheet(entry: $0) }
         }
     }
@@ -59,7 +59,7 @@ struct HomeView: View {
             Text(AppFormat.money(total))
                 .ds(.amountDisplay)
                 .tabularFigures()
-                .foregroundStyle(Palette.ink)
+                .foregroundStyle(Palette.danger)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
         }
@@ -110,12 +110,8 @@ struct HomeView: View {
     }
 
     private var actionBar: some View {
-        HStack(spacing: Space.s3) {
-            Button("Add expense") { showAdd = true }
-                .buttonStyle(.pillStyle(.primary, fullWidth: true))
-            Button("Paste SMS") { showPaste = true }
-                .buttonStyle(.pillStyle(.secondary, fullWidth: true))
-        }
+        Button("Add expense") { showAdd = true }
+            .buttonStyle(.pillStyle(.primary, fullWidth: true))
         .padding(.horizontal, Space.s4)
         .padding(.top, Space.s3)
         .padding(.bottom, Space.s2)

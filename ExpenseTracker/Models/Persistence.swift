@@ -5,6 +5,9 @@ import ExpenseCore
 enum SettingsKey {
     static let periodStartDay = "periodStartDay"
     static let lastMessageAt = "lastMessageAt"
+    /// A custom billing period, stored as seconds since 1970 (0 means not set).
+    static let customStart = "customPeriodStart"
+    static let customEnd = "customPeriodEnd"
     /// When on, a message with the same text as one already saved is skipped. Off by default: every message is saved.
     static let ignoreDuplicates = "ignoreDuplicates"
 }

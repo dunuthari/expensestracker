@@ -6,12 +6,14 @@ struct IncomeView: View {
     @Query(sort: \LedgerEntry.date, order: .reverse) private var entries: [LedgerEntry]
     @Query(sort: \TxGroup.sortOrder) private var allGroups: [TxGroup]
     @AppStorage(SettingsKey.periodStartDay) private var startDay = 1
+    @AppStorage(SettingsKey.customStart) private var customStart = 0.0
+    @AppStorage(SettingsKey.customEnd) private var customEnd = 0.0
 
     @State private var showAdd = false
     @State private var showAll = false
     @State private var selected: LedgerEntry?
 
-    private var period: BillingPeriod { BillingPeriod.containing(Date(), startDay: startDay) }
+    private var period: BillingPeriod { currentPeriod(startDay: startDay, customStart: customStart, customEnd: customEnd) }
     private var credits: [LedgerEntry] { entries.filter { $0.kind == .credit && period.contains($0.date) } }
     private var groups: [TxGroup] { allGroups.filter { $0.kind == .credit } }
     private var total: Decimal { credits.reduce(0) { $0 + $1.amount } }

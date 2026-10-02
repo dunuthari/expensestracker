@@ -7,10 +7,12 @@ struct ReportView: View {
     @Query(sort: \LedgerEntry.date, order: .reverse) private var entries: [LedgerEntry]
     @Query(sort: \TxGroup.sortOrder) private var allGroups: [TxGroup]
     @AppStorage(SettingsKey.periodStartDay) private var startDay = 1
+    @AppStorage(SettingsKey.customStart) private var customStart = 0.0
+    @AppStorage(SettingsKey.customEnd) private var customEnd = 0.0
     @State private var offset = 0
 
     private var period: BillingPeriod {
-        BillingPeriod.containing(Date(), startDay: startDay).shifted(by: offset)
+        currentPeriod(startDay: startDay, customStart: customStart, customEnd: customEnd).shifted(by: offset)
     }
     private var inPeriod: [LedgerEntry] { entries.filter { period.contains($0.date) } }
     private var expenses: [LedgerEntry] { inPeriod.filter { $0.kind == .debit } }

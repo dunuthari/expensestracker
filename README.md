@@ -6,7 +6,7 @@ An iPhone app that turns bank SMS alerts into an automatic expense and income tr
 - A credit alert (`LKR 1,500.00 credited to…`) is saved silently as income. You tag it later in the Income tab.
 - Anything the app can't read lands in Inbox as "Needs review".
 - Every message is saved, even if the text repeats. Turn on **Settings → Ignore repeated messages** to skip repeats.
-- You manage your own expense groups and income groups, and set the day each billing period starts.
+- You manage your own expense groups and income groups, and set the start and end date of your billing period (it follows the calendar month until you do).
 - The Report tab shows income, expenses and net for a period, with totals per group.
 
 Everything stays on the phone. There is no server.

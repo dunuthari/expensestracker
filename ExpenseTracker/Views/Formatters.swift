@@ -26,3 +26,13 @@ enum AppFormat {
         Money.format(amount, currency: currency, signed: signed)
     }
 }
+
+/// The period shown on Home, Income and Report: the custom date range when one is set, otherwise the calendar month.
+func currentPeriod(startDay: Int, customStart: Double, customEnd: Double, now: Date = Date()) -> BillingPeriod {
+    BillingPeriod.current(
+        now: now,
+        startDay: startDay,
+        customStart: customStart > 0 ? Date(timeIntervalSince1970: customStart) : nil,
+        customEnd: customEnd > 0 ? Date(timeIntervalSince1970: customEnd) : nil
+    )
+}

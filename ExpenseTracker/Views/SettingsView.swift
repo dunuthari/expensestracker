@@ -5,33 +5,59 @@ import ExpenseCore
 
 struct SettingsView: View {
     @AppStorage(SettingsKey.periodStartDay) private var startDay = 1
+    @AppStorage(SettingsKey.customStart) private var customStart = 0.0
+    @AppStorage(SettingsKey.customEnd) private var customEnd = 0.0
+    @State private var draftStart = Date()
+    @State private var draftEnd = Date()
     @AppStorage(SettingsKey.lastMessageAt) private var lastMessageAt = 0.0
     @AppStorage(SettingsKey.ignoreDuplicates) private var ignoreDuplicates = false
     @State private var authStatus: UNAuthorizationStatus = .notDetermined
 
-    private var period: BillingPeriod { BillingPeriod.containing(Date(), startDay: startDay) }
+    private var period: BillingPeriod { currentPeriod(startDay: startDay, customStart: customStart, customEnd: customEnd) }
+
+    private var endBeforeStart: Bool {
+        Calendar.current.startOfDay(for: draftEnd) < Calendar.current.startOfDay(for: draftStart)
+    }
+
+    private var periodMessage: String {
+        if endBeforeStart { return "The end date can't be before the start date." }
+        return period.isCustom
+            ? "Custom period: \(period.label())."
+            : "Current period: \(period.label()). It follows the calendar month until you set dates."
+    }
+
+    private func applyDates() {
+        guard !endBeforeStart else { return }
+        customStart = Calendar.current.startOfDay(for: draftStart).timeIntervalSince1970
+        customEnd = Calendar.current.startOfDay(for: draftEnd).timeIntervalSince1970
+    }
+
+    private func dateRow(_ title: String, selection: Binding<Date>) -> some View {
+        HStack {
+            Text(title).ds(.rowTitle).foregroundStyle(Palette.ink)
+            Spacer()
+            DatePicker(title, selection: selection, displayedComponents: .date)
+                .labelsHidden()
+        }
+        .padding(Space.s4)
+        .background(card)
+    }
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Space.s8) {
                     section("Billing period") {
-                        HStack {
-                            Text("Period starts on day").ds(.rowTitle).foregroundStyle(Palette.ink)
-                            Spacer()
-                            Picker("Start day", selection: $startDay) {
-                                ForEach(Array(BillingPeriod.startDayRange), id: \.self) { day in
-                                    Text("\(day)").tag(day)
-                                }
-                            }
-                            .pickerStyle(.menu)
-                            .tint(Palette.ink)
+                        VStack(spacing: Space.s3) {
+                            dateRow("Start date", selection: $draftStart)
+                            dateRow("End date", selection: $draftEnd)
+                            Button("Apply dates", action: applyDates)
+                                .buttonStyle(.pillStyle(.primary, fullWidth: true))
+                                .disabled(endBeforeStart)
                         }
-                        .padding(Space.s4)
-                        .background(card)
-                        Text("Current period: \(period.label()). Totals reset on day \(startDay) of each month.")
+                        Text(periodMessage)
                             .ds(.caption)
-                            .foregroundStyle(Palette.inkSecondary)
+                            .foregroundStyle(endBeforeStart ? Palette.review : Palette.inkSecondary)
                     }
 
                     section("Groups") {
@@ -56,6 +82,10 @@ struct SettingsView: View {
             .background(Palette.bg)
             .navigationTitle("Settings")
             .task { authStatus = await Notifier.authorizationStatus() }
+            .onAppear {
+                draftStart = period.start
+                draftEnd = Calendar.current.date(byAdding: .day, value: -1, to: period.end) ?? period.end
+            }
         }
     }
 
